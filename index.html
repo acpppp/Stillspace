@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#f6efe1">
+<meta name="description" content="A cozy pixel-art focus timer. Settle in with a little fox and earn a star for every focus session.">
+<title>STILLSPACE · A cozy focus timer</title>
+<script>if (location.pathname !== '/') location.replace('/' + location.search + location.hash);</script>
+<link rel="icon" href="/fox.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/style.css">
+<script defer src="/scene.js"></script><script defer src="/appearance.js"></script><script defer src="/shop.js"></script><script defer src="/timer.js"></script><script defer src="/play.js"></script>
+</head>
+<body>
+<div class="shell">
+<header class="top">
+  <img src="fox.svg" alt="" width="34" height="34">
+  <nav class="top-actions" aria-label="Timer tools">
+    <button type="button" class="utility" id="settings" aria-haspopup="dialog">Options</button>
+    <button type="button" class="utility" id="open-history" aria-haspopup="dialog">History</button>
+    <button type="button" class="utility" id="cabin-view" aria-pressed="false">Cabin</button>
+    <button type="button" class="utility" id="sound" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4zM16 9l5 6m0-6-5 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="square" stroke-linejoin="round"/></svg><span>Sound off</span></button>
+  </nav>
+</header>
+<p id="storage-warning" class="app-warning" role="status"></p>
+<main>
+  <div class="portrait">
+    <button type="button" id="pet-portrait" aria-label="Pet Rue">
+      <canvas id="rue-portrait" width="48" height="44" aria-hidden="true"></canvas>
+    </button>
+  </div>
+  <p id="play-note" class="sr" aria-live="polite"></p>
+  <div class="workbench card">
+    <section class="scene" aria-label="Your woodland den">
+      <div class="landscape">
+        <canvas id="woodland" width="256" height="196" role="img" aria-label="Animated pixel art of a little orange fox outside a forest cabin at sunset."></canvas>
+        <span class="location"><i></i> FOX HOLLOW</span>
+        <div class="fly-counter" id="fly-counter" hidden>
+          <span id="fly-score"></span>
+          <span class="fly-pips" id="fly-pips" aria-hidden="true"></span>
+        </div>
+        <button type="button" class="firefly" id="firefly" aria-label="Catch a firefly" hidden>
+          <span aria-hidden="true"></span>
+        </button>
+        <div class="catch-sparkles" id="catch-sparkles" aria-hidden="true"></div>
+      </div>
+      <div class="scene-caption"><span class="companion"><img src="fox.svg" alt="" width="31" height="31"><span><strong>Rue the fox</strong><small id="fox-note">Keeping your spot warm.</small></span></span><span class="mood" id="mood"><i></i> Cozy</span></div>
+      <div class="playbar">
+        <button type="button" id="play-fireflies" aria-pressed="false"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M7 1h2v4h2v2h4v2h-4v2H9v4H7v-4H5V9H1V7h4V5h2z"/></svg><span>Catch fireflies</span></button>
+        <button type="button" id="pet-rue"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 3h4v2h4V3h4v2h2v4h-2v2h-2v2h-2v2H6v-2H4v-2H2V9H0V5h2z"/></svg>Pet Rue</button>
+        <button type="button" id="sky-switch"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M7 1h3v2H8v6h2v2h5v2h-2v2H6v-2H3v-3H1V6h2V3h4z"/></svg><span>Moonlight</span></button>
+      </div>
+    </section>
+    <section class="timer" aria-label="Focus timer">
+      <div class="modes" role="group" aria-label="Timer mode">
+        <button data-mode="focus" aria-pressed="true">Focus</button><button data-mode="short" aria-pressed="false">Short break</button><button data-mode="long" aria-pressed="false">Long break</button>
+      </div>
+      <div class="clock-block">
+        <div class="time" id="time" role="timer" aria-live="off">25:00</div>
+        <p class="clock-note" id="clock-note">Ready when you are.</p>
+        <button class="audio-recovery" id="restore-audio" type="button" hidden>Restore timer audio</button>
+      </div>
+      <div class="tracks" id="tracks" role="progressbar" aria-label="Session progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
+      <div class="actions">
+        <button class="start" id="start"><svg aria-hidden="true" viewBox="0 0 16 16"><path d="M4 2h3v2h3v2h3v4h-3v2H7v2H4z"/></svg><span>Start focus</span></button>
+        <button class="icon-button" id="reset" aria-label="Reset timer" title="Reset timer"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4v6h6M4.5 10a8 8 0 1 1 1.2 7.4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      </div>
+      <label class="focus-goal" for="focus-goal"><span>Focus goal</span>
+        <input type="text" id="focus-goal" maxlength="120" autocomplete="off" placeholder="What are you working on?">
+      </label>
+      <p class="sr" id="announcement" aria-live="polite"></p>
+    </section>
+  </div>
+  <section class="shelf card" aria-label="Today's focus stars">
+    <div class="shelf-info"><div class="star-tile"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M8 1h4v5h6v4h-3v3h2v5h-5v-3H8v3H3v-5h2v-3H2V6h6z"/></svg></div><div><h2>Today’s star shelf</h2><p id="shelf-note">Finish a focus session to earn a little star.</p></div></div>
+    <div class="shelf-actions">
+      <div class="stars" id="stars" aria-label="0 focus sessions today"></div>
+      <button type="button" class="shop-button" id="open-shop" aria-haspopup="dialog"><span id="wallet" class="wallet"></span> Cabin shop</button>
+    </div>
+  </section>
+</main>
+</div>
+<dialog id="preferences" class="prefs" aria-labelledby="settings-title">
+  <div class="dialog-head"><h2 id="settings-title">Options</h2><button class="icon-button" type="button" id="close-settings" aria-label="Close options">×</button></div>
+  <div class="settings-layout">
+    <div class="settings-basic">
+      <form id="settings-form">
+        <h3 class="option-heading">Timer lengths <small>minutes</small></h3>
+        <label>Focus <input name="focus" type="number" min="1" max="120" required></label>
+        <label>Short break <input name="short" type="number" min="1" max="60" required></label>
+        <label>Long break <input name="long" type="number" min="1" max="60" required></label>
+        <p class="reset-hint" id="reset-hint" hidden>Changing the current duration resets that session.</p>
+        <button class="start" type="submit">Save timer lengths</button>
+      </form>
+      <h3 class="option-heading">Appearance presets</h3>
+      <div id="appearance-colors"></div>
+    </div>
+    <details class="custom-theme">
+      <summary>Custom theme</summary>
+      <div id="custom-theme-colors"></div>
+      <button type="button" class="utility" id="reset-theme">Reset custom colors</button>
+    </details>
+  </div>
+</dialog>
+<dialog id="focus-history" class="prefs history" aria-labelledby="history-title">
+  <div class="dialog-head"><h2 id="history-title">Focus history</h2><button class="icon-button" type="button" id="close-history" aria-label="Close history">×</button></div>
+  <div class="history-stats">
+    <div><span>Today</span><strong id="history-today">0 min</strong></div>
+    <div><span>Total focus time</span><strong id="history-total">0 min</strong></div>
+  </div>
+  <p id="history-empty">Your completed focus sessions will appear here.</p>
+  <ol id="history-sessions" class="history-sessions" aria-label="Recent focus sessions"></ol>
+</dialog>
+<dialog id="cabin-shop" class="prefs cabin-shop" aria-labelledby="shop-title">
+  <div class="dialog-head">
+    <h2 id="shop-title">Cabin shop</h2>
+    <button class="icon-button" type="button" id="close-shop" aria-label="Close cabin shop">×</button>
+  </div>
+  <p>Earn one star per focus session. Spend them on treats and new looks for Fox Hollow.</p>
+  <p id="shop-balance" class="wallet"></p>
+  <div class="modes shop-filters" role="group" aria-label="Shop categories">
+    <button type="button" data-shop-filter="cabin" aria-pressed="true">Cabin & treats</button>
+    <button type="button" data-shop-filter="background" aria-pressed="false">Backgrounds</button>
+    <button type="button" data-shop-filter="outfit" aria-pressed="false">Outfits</button>
+  </div>
+  <ul id="shop-items" class="shop-items" aria-label="Shop items"></ul>
+  <p id="shop-feedback" class="shop-feedback" role="status"></p>
+</dialog>
+</body>
+</html>
